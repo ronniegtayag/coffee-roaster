@@ -16,7 +16,7 @@ Web and API are hosted separately (the API needs CORS). Design: `docs/design/fro
 
 ## Code layout
 
-- `apps/api/src/modules/<name>/` — one folder per module (customers, suppliers, supplier-invoices, inventory, orders, invoicing, reports).
+- `apps/api/src/modules/<name>/` — one folder per module (auth, customers, products, suppliers, supplier-invoices, inventory, orders, invoicing, reports).
 - Each module's `index.ts` is its only public API. Never import another module's internals.
 - `apps/api/src/generated/prisma/` is generated — never edit; run `pnpm api prisma:generate`.
 - API is served under `api/v1` (see `apps/api/src/app.setup.ts`); global `ValidationPipe` uses `whitelist` + `forbidNonWhitelisted`.
