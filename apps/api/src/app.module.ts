@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validateEnv } from './config/env';
 import { HealthModule } from './health/health.module';
+import { AuthModule } from './modules/auth';
 import { CustomersModule } from './modules/customers';
 import { InventoryModule } from './modules/inventory';
 import { InvoicingModule } from './modules/invoicing';
@@ -16,6 +17,7 @@ import { PrismaModule } from './prisma/prisma.module';
     ConfigModule.forRoot({ isGlobal: true, cache: true, validate: validateEnv }),
     PrismaModule,
     HealthModule,
+    AuthModule,
     CustomersModule,
     OrdersModule,
     InvoicingModule,
