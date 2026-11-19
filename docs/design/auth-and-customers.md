@@ -121,7 +121,7 @@ interface FieldError {
 }
 ```
 
-- The global `ValidationPipe` gets an `exceptionFactory` that produces 400 `VALIDATION_FAILED` with `message: "Some fields need attention"` and one `fieldErrors` entry per field (first failing constraint only). Unknown fields (`forbidNonWhitelisted`) appear with code `whitelistValidation`; the web treats them as a developer bug.
+- The global `ValidationPipe` gets an `exceptionFactory` that produces 400 `VALIDATION_FAILED` with `message: "Some fields need attention"` and one `fieldErrors` entry per field (the top-most failing decorator only, so a missing required field reports "is required" rather than a length rule). Unknown fields (`forbidNonWhitelisted`) appear with code `whitelistValidation`; the web treats them as a developer bug.
 - Change to the web (`shared/api/errors.ts`): read `code` and `fieldErrors` into `ApiError`. Old `details: string[]` can be derived from `fieldErrors[].message`.
 
 | Status | `code`                | When                                                                                                                                                                                              |

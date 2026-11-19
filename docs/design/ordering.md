@@ -44,6 +44,7 @@ export type { ScheduleSuggestion } from './schedule/schedule.types';
 
 // apps/api/src/modules/customers/index.ts — add one line
 export type { OrderingBranch } from './customers.types';
+export { displayName as customerDisplayName } from './customers.mapper'; // added after review; orders.mapper must import it from '../customers'
 ```
 
 ```ts
@@ -97,7 +98,7 @@ See `apps/api/prisma/schema.prisma` for the full models. Summary:
   - `customerId` (copied from the branch, which never moves, D-PO-5), `branchId`, `invoiceId?` (now `onDelete: Restrict`).
   - `deliveryDate`, `roastDate`: `@db.Date`, plain Sydney dates, required. Replaces `requestedDeliveryDate`. `orderedAt` dropped (`createdAt` covers it).
   - `afterCutoff Boolean`: set when lines or dates were last saved off-schedule (§5.4). Shown as the "After cut-off" badge.
-  - Stored totals: `subtotalExGst`, `gstAmount`, `totalIncGst` (`Decimal(12,2)`), `totalWeightGrams Int`. Recomputed from the line rows in the same transaction as any line change.
+  - Stored totals: `subtotalExGst`, `gstAmount`, `totalIncGst` (`Decimal(12,2)`), `totalWeightGrams BigInt` (200 lines × 999 × 100 kg overflows Int4; DTOs still send a JSON number, safe below 2^53). Recomputed from the line rows in the same transaction as any line change.
   - `version Int` for optimistic concurrency (O4 Should, D-AR-19).
   - `cancelReason`, and timestamps `confirmedAt` (first confirmation, never cleared), `packedAt`, `dispatchedAt`, `deliveredAt`, `cancelledAt`.
   - `createdById`, `updatedById` → `users` (S3 / G27).
@@ -115,6 +116,12 @@ See `apps/api/prisma/schema.prisma` for the full models. Summary:
 - It starts with a guard that aborts if `products`, `orders`, `order_items` or `inventory_items` hold any rows. They are empty everywhere today (no endpoint ever created them), and the reshape would otherwise lose data.
 - Hand-written SQL (sequence restart, CHECKs, partial unique index, default rows) is not modelled by Prisma. I checked twice that Prisma leaves it alone: `migrate diff` and a `migrate dev` shadow replay both came out empty.
 - Uses Postgres 18's built-in `uuidv7()` for the seeded grind ids.
+- Prisma wraps the `OrderStatus` enum swap in its own `BEGIN … COMMIT`, so a failure after that point leaves the migration half-applied (normal Prisma behaviour; harmless on the empty tables the guard requires).
+- **Follow-up migration `20261119090454_ordering_review_fixes`** (code review):
+  - `orders.totalWeightGrams` becomes `BIGINT`.
+  - The roast calendar CHECK now requires the three arrays to be non-null. Prisma creates `Int[]` as nullable, and `cardinality(NULL) > 0` passed the old CHECK.
+  - Expression unique indexes `coffees_name_lower_key` and `grinds_name_lower_key` on `lower(btrim(name))`, so case-insensitive name uniqueness holds under races. Map a unique violation on either to `COFFEE_NAME_TAKEN` / `GRIND_NAME_TAKEN`.
+  - As before, Prisma leaves these alone (no drift).
 
 **Not added (deliberately):** per-customer prices, standing orders, the MYOB invoice id, stock deductions. §9 shows how each is added later without changing what is built now.
 
@@ -185,7 +192,7 @@ All dates are plain Sydney dates (`YYYY-MM-DD`). "Now" is the injected clock con
 ### 5.2 Suggestions
 
 - **From now** (new order, copy): R = the first roast day from today (Sydney) whose cut-off has not passed. D = the first delivery day on or after `addBusinessDays(R, lag)`.
-- **From a delivery date D** (staff changed it): R = the latest roast day with `addBusinessDays(R, lag) <= D`. Returned with `onSchedule` (false if R's cut-off has passed, so the web can say "too late for this delivery date" before saving).
+- **From a delivery date D** (staff changed it): R = the latest roast day with `addBusinessDays(R, lag) <= D`. Returned with `onSchedule` (false if R's cut-off has passed, so the web can say "too late for this delivery date" before saving). **If R would be before today (Sydney), R = today** (a same-day or next-day rush): the suggestion is then off schedule (`CUTOFF_PASSED`, possibly `DELIVERY_TOO_SOON`/`NOT_A_ROAST_DAY`), never a past date. The same clamp applies when `POST /orders` derives the roast date from a given `deliveryDate`. So staff get 409 `SCHEDULE_OVERRIDE_REQUIRED` with a suggestion, and managers get the order flagged `afterCutoff`, rather than a 400 on a roast date nobody typed.
 - Searches are bounded to 366 days. If nothing is found (e.g. everything closed): 409 `NO_SCHEDULE_AVAILABLE`.
 
 Examples with the defaults (all Sydney time; the UTC instants are what the fake clock is set to):
@@ -209,6 +216,8 @@ Checked only when the request sets or changes a date:
 - `roastDate < today` → `roastDate`: `Roast date can't be in the past`.
 - `roastDate > deliveryDate` → `roastDate`: `Roast date must be on or before the delivery date`.
 
+- **Field errors only on dates the user sent (D-AR-28).** A past `deliveryDate` is rejected (400 on `deliveryDate`) **before** any roast date is derived from it. This applies to `GET /orders/schedule?deliveryDate=` and to `POST /orders` without `roastDate`. So the clamp in §5.2 never produces a roast date after the delivery date, and a derived date never gets its own field error. Likewise, a past `roastDate` sent alone gets one error on `roastDate`, with no error about the derived delivery date.
+
 A delivery date more than 90 days ahead is a **web-only warning** (no API rule).
 
 ### 5.4 Off-schedule saves and `afterCutoff`
@@ -218,8 +227,8 @@ A save is **schedule-relevant** if it changes lines or either date, or confirms 
 - On a schedule-relevant save of a DRAFT or CONFIRMED order, compute on-schedule for the resulting dates at `now`:
   - On schedule → allowed with `orders:write`; set `afterCutoff = false`.
   - Off schedule → needs `orders:late-change`. With it: allowed, and `afterCutoff = true`. Without it:
-    - DRAFT (or a new order): 409 `SCHEDULE_OVERRIDE_REQUIRED`, `meta: { reasons, cutoff, suggestion: { roastDate, deliveryDate } }`. Staff can pick the suggested dates and save again (brief E table).
-    - CONFIRMED past cut-off: 403 `FORBIDDEN`, `meta: { reason: 'PAST_CUTOFF' }`. A confirmed order past cut-off may be in the roast plan, so staff can't re-date it either (S1).
+    - DRAFT, a new order, or a CONFIRMED order whose **stored** roast date is not yet past cut-off (e.g. moving it to a non-roast day): 409 `SCHEDULE_OVERRIDE_REQUIRED`, `meta: { reasons, cutoff, suggestion: { roastDate, deliveryDate } }`. Staff can pick the suggested dates and save again (brief E table).
+    - CONFIRMED whose **stored** roast date is past cut-off: 403 `FORBIDDEN`, `meta: { reason: 'PAST_CUTOFF' }`, whatever the new dates are. A confirmed order past cut-off may be in the roast plan, so staff can't re-date it either (S1).
 - PACKED / DISPATCHED: see §6.3; `afterCutoff` is not recomputed.
 - `afterCutoff` stays as last computed. It does not flip to true when time passes (the derived `pastCutoff` covers that).
 
@@ -558,8 +567,8 @@ A field counts as "changed" only if its value differs from the stored one. Sendi
 **Order of checks** (so tests get one deterministic error):
 
 1. Guard permission (403).
-2. Load (404).
-3. DTO validation (400).
+2. DTO validation (400). Nest pipes run before the handler, so a malformed body on an unknown id is 400, not 404.
+3. Load (404).
 4. `version` (409 `VERSION_CONFLICT`, `meta: { currentVersion, status }`, message "This order was changed by someone else — reload").
 5. Status transition / editability (409 `INVALID_TRANSITION` with `meta: { status }`, or `ORDER_NOT_EDITABLE`).
 6. Status-based permission (403 `FORBIDDEN` with `meta.reason`: `PAST_CUTOFF`, `SHORT_SUPPLY`, `LATE_CHANGE`).
@@ -657,6 +666,10 @@ Closure days are configuration, so a hard delete is fine (unlike orders). For th
 20. Off-schedule as STAFF on a new order (rush dates, or the cut-off passed while the form was open) → 409 `SCHEDULE_OVERRIDE_REQUIRED` with `suggestion`. As MANAGER → 201 with `afterCutoff: true`. Re-dating to an on-schedule slot clears `afterCutoff`. A notes-only save never changes it.
 21. A CONFIRMED order whose cut-off passes: STAFF line or date change → 403 `PAST_CUTOFF`. A STAFF notes change → 200. A MANAGER change → 200 and `afterCutoff: true`.
 22. `pastCutoff` in the list/detail flips at the cut-off without any write.
+    - Roast-date clamp: `POST /orders` with only `deliveryDate` = today (Sydney) derives roast = today, not yesterday. STAFF get 409 `SCHEDULE_OVERRIDE_REQUIRED` (not 400); MANAGER gets 201 with `afterCutoff: true`. `GET /orders/schedule?deliveryDate=<today>` returns `roastDate` = today with `onSchedule: false`.
+    - CONFIRMED order before its cut-off: STAFF moving it to a non-roast day → 409 `SCHEDULE_OVERRIDE_REQUIRED` (not 403). After its cut-off, any line/date change by STAFF → 403 `PAST_CUTOFF`.
+    - Malformed body on an unknown order id → 400 (DTO validation runs before the load).
+    - Past delivery date: `GET /orders/schedule?deliveryDate=<yesterday>` → 400 at `deliveryDate` (`pastDate`), never a suggestion with roast after delivery. `POST /orders` with only `deliveryDate=<yesterday>` → 400 with exactly one field error, on `deliveryDate`.
 
 **Status machine and permissions**
 
@@ -700,12 +713,14 @@ Routes (TanStack Router, under `_authed`; search params validated and in the URL
 | `/products/$productId`                           | View/edit price, tax code, SKU; (de)activate; P2 warning "N open orders still use the old tax code"                                                                           |                                                                                                              |
 | `/coffees`, `/coffees/new`, `/coffees/$coffeeId` | Coffee list/create; coffee detail with its products and "Add product"                                                                                                         | `status`, `search`                                                                                           |
 | `/orders`                                        | Order list (L1)                                                                                                                                                               | `page`, `search`, `status` (comma list), `deliveryFrom`, `deliveryTo`, `roastDate`, `customerId`, `branchId` |
-| `/orders/new`                                    | New order (O1, O2): customer → branch (only active, auto-select a single one), dates (prefilled from `GET /orders/schedule`), lines, notes; live totals as an **estimate**    | `branchId`, `copyFrom` (Should)                                                                              |
+| `/orders/new`                                    | New order (O1, O2): customer → branch (only active, auto-select a single one), dates (prefilled from `GET /orders/schedule`), lines, notes; live totals as an **estimate**    | `customerId`, `branchId`, `copyFrom` (Should)                                                                |
 | `/orders/$orderId`                               | Order detail (L2): branch address and delivery notes (read-only), lines with tax codes, ex/GST/inc totals, status actions from `allowedActions`, warnings, history (S3)       |                                                                                                              |
+| `/orders/$orderId/edit`                          | Edit lines, dates and notes, limited by `allowedActions` (e.g. `editLines: 'reduceOnly'` on PACKED); sends `PATCH /orders/:id` with `version`                                 |                                                                                                              |
 | `/orders/roast-summary` (Should)                 | kg per coffee for a roast date (L3)                                                                                                                                           | `roastDate`                                                                                                  |
 | `/settings/roast-calendar` (Should)              | Calendar settings and closure days (ADMIN)                                                                                                                                    |                                                                                                              |
 
-- **Default order list:** if the URL has none of `deliveryFrom`, `deliveryTo`, `roastDate`, `search`, send `deliveryFrom=<today Sydney>` (`todayInSydney()` in `shared/lib/dates.ts`) and the default statuses. Keep the URL clean in that case. Once the user sets any of those, send exactly what is in the URL.
+- **Customer and branch picker on `/orders/new`:** search customers with `GET /customers?status=active&search=`, then load the chosen customer with `GET /customers/:id` and offer its branches where `isActive` is true (auto-select if exactly one). No branch search endpoint is planned; at tens to hundreds of customers this is two small requests. Links into the form pass both ids (`/orders/new?customerId=<id>&branchId=<id>`), because there is no `GET /branches/:id`; the web loads the customer and pre-selects the branch if it is still active.
+- **Default order list:** if the URL has none of `deliveryFrom`, `deliveryTo`, `roastDate`, `search`, send `deliveryFrom=<today Sydney>` (`todayInSydney()` in `shared/lib/dates.ts`) and the default statuses. Keep the URL clean in that case. Once the user sets any of those, send exactly what is in the URL. `customerId`, `branchId` and `status` alone do not switch the default off: filtering by a customer still shows its upcoming orders. The customer page panel (L4) makes its own request and does not use the list URL.
 - **Hide controls by `user.permissions` and `order.allowedActions`, never by role.** `allowedActions` already encodes status × cut-off × role, so the web must not re-implement the S1 table.
 - **Money:**
   - Strings from the API, shown with `formatAud`.
@@ -724,7 +739,7 @@ Routes (TanStack Router, under `_authed`; search params validated and in the URL
   - `CUSTOMER_INACTIVE`/`BRANCH_INACTIVE`: link to the customer.
 - **Idempotency:** generate `requestId` (`crypto.randomUUID()`) once when the new-order form mounts and reuse it on retries. Disable Save/Confirm while pending.
 - **Query keys:** `productKeys.list(params)`, `productKeys.orderable()`, `productKeys.detail(id)`, `coffeeKeys.list(params)`, `coffeeKeys.detail(id)`, `grindKeys.all`, `orderKeys.list(params)`, `orderKeys.detail(id)`, `orderKeys.schedule(deliveryDate?)`, `orderKeys.roastSummary(date)`, `['roast-calendar']`. Order mutations invalidate `orderKeys.detail(id)` and `orderKeys.lists()`. Product/coffee mutations invalidate `productKeys.all` and `coffeeKeys.all`.
-- **Customer page (L4 Should):** a "Recent orders" panel using `GET /orders?customerId=<id>&status=DRAFT,CONFIRMED,PACKED,DISPATCHED,DELIVERED,CANCELLED&pageSize=10`. "New order" on a branch row links to `/orders/new?branchId=`.
+- **Customer page (L4 Should):** a "Recent orders" panel using `GET /orders?customerId=<id>&status=DRAFT,CONFIRMED,PACKED,DISPATCHED,DELIVERED,CANCELLED&pageSize=10`. "New order" on a branch row links to `/orders/new?customerId=<id>&branchId=<id>`.
 - **Empty states:** the brief's E table. "No products yet" is driven by `GET /products/orderable` being empty.
 
 ## 9. Later, without redoing orders
