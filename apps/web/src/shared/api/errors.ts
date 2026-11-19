@@ -36,6 +36,10 @@ export function toApiError(error: unknown): ApiError {
   }
 
   const { status, data } = error.response;
+  // A gateway (the Vite dev proxy, a load balancer) answers for an API that is down, with no Nest body.
+  if (status >= 502 && status <= 504 && !data?.message) {
+    return new ApiError(status, 'Cannot reach the server');
+  }
   const details = Array.isArray(data?.message) ? data.message : [];
   const message =
     (typeof data?.message === 'string' && data.message) ||

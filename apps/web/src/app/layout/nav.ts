@@ -1,4 +1,5 @@
 import {
+  Activity,
   BarChart3,
   Boxes,
   FileText,
@@ -28,4 +29,5 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Suppliers', to: '/suppliers', icon: Truck, ready: false },
   { label: 'Supplier invoices', to: '/supplier-invoices', icon: FileText, ready: false },
   { label: 'Reports', to: '/reports', icon: BarChart3, ready: false },
+  { label: 'System status', to: '/system/status', icon: Activity, ready: true },
 ];

@@ -19,7 +19,7 @@ function RootLayout() {
   return (
     <AppShell>
       <Outlet />
-      {import.meta.env.DEV && <TanStackRouterDevtools position="bottom-right" />}
+      {import.meta.env.DEV && <TanStackRouterDevtools position="top-right" />}
     </AppShell>
   );
 }
