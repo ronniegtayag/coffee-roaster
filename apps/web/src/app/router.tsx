@@ -1,4 +1,5 @@
 import { createRouter } from '@tanstack/react-router';
+import { setSessionExpiredHandler } from '@/shared/api/session';
 import { queryClient } from '@/shared/api/query-client';
 import { routeTree } from './routeTree.gen';
 
@@ -14,6 +15,16 @@ export function createAppRouter() {
 }
 
 export const router = createAppRouter();
+
+// When a session ends on its own, go to login and come back to this page afterwards.
+setSessionExpiredHandler(() => {
+  if (router.state.location.pathname === '/login') return;
+  void router.navigate({
+    to: '/login',
+    search: { redirect: router.state.location.href, reason: 'expired' },
+    replace: true,
+  });
+});
 
 declare module '@tanstack/react-router' {
   interface Register {

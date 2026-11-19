@@ -24,5 +24,15 @@ export default tseslint.config(
     files: ['src/shared/ui/**', 'src/app/routes/**'],
     rules: { 'react-refresh/only-export-components': 'off' },
   },
+  {
+    // TanStack Router redirects are thrown from route guards (`throw redirect(...)`).
+    files: ['src/app/routes/**'],
+    rules: {
+      '@typescript-eslint/only-throw-error': [
+        'error',
+        { allow: [{ from: 'package', package: '@tanstack/router-core', name: 'Redirect' }] },
+      ],
+    },
+  },
   eslintConfigPrettier,
 );

@@ -43,7 +43,7 @@ Each claim carries one of these labels:
 | **Adjustment note**                | The ATO term for a credit note that adjusts GST (section 9).                                                                                                                            | Needed for credits on taxable lines.                                                                                                    |
 | **GST-free**                       | A sale with no GST charged. Most coffee beans, roasted or ground, are GST-free food.                                                                                                    | Each line needs a tax code. Invoices mix GST and GST-free lines.                                                                        |
 | **COGS**                           | Cost of goods sold: green + packaging + labour/overheads, depending on the accountant's method.                                                                                         | Reporting margin by customer and product.                                                                                               |
-| **Xero**                           | Common Australian small-business accounting software (MYOB and QuickBooks are alternatives).                                                                                            | Decides which system "owns" invoices and payments.                                                                                      |
+| **Xero / MYOB**                    | Common Australian small-business accounting software (QuickBooks is another). **This roaster uses MYOB** (answered 2026-11-19; product not yet known).                                  | Decides which system "owns" invoices and payments. See `myob-integration.md`.                                                           |
 
 ---
 
@@ -60,7 +60,7 @@ Each claim carries one of these labels:
                                                                   │
                                                Payment / credit note / overdue follow-up
                                                                   │
-                                       Accounting system (often Xero) + reports (sales, COGS, stock)
+                                       Accounting system (MYOB here) + reports (sales, COGS, stock)
 ```
 
 The order book drives production in reverse. Orders due for a roast day are added up into **kg of each coffee needed**. That is then turned into **kg of green needed** (allowing for roast loss and the blend recipe), and then into a **list of batches**.
@@ -78,7 +78,7 @@ The order book drives production in reverse. Orders due for a roast day are adde
 3. Units are whole bags or boxes. Common sizes are 30 kg (MCM), 60 kg sacks and 69/70 kg sacks. Sucafina's units range from 20 to 70 kg and cannot be split. **[Common practice]** ([MCM](https://melbournecoffeemerchants.com.au/how-to-order/), [Sucafina APAC](https://sucafina.com/apac/how-to-order))
 4. Local importers quote a flat **AUD per kg, ex-warehouse**. Delivery to the roastery is charged on top. Some importers ask new or small customers to pay upfront. **[Common practice]** ([MCM](https://melbournecoffeemerchants.com.au/how-to-order/), [Sucafina](https://sucafina.com/apac/how-to-order))
 5. If the roaster imports directly, extra costs apply: freight, insurance, customs brokerage and biosecurity fees per consignment. This is uncommon for a small roaster. **[Assumption — confirm with roaster]** ([indicative example](https://specialtycoffee.id/?p=13973))
-6. The importer's invoice arrives and is entered as a **supplier bill**, usually in Xero. A separate freight invoice may follow. **[Common practice]**
+6. The importer's invoice arrives and is entered as a **supplier bill**, usually in the accounting system (MYOB for this roaster). A separate freight invoice may follow. **[Common practice]**
 
 **Data involved:** supplier (importer), purchase (lot code, origin, process, harvest, bag count × bag weight, price/kg, expected arrival), supplier invoice lines, freight invoice, received date and quantity.
 
@@ -177,7 +177,7 @@ Further rules:
 - GST rounding per line vs per invoice is **[Assumption — confirm with accountant]**. `CLAUDE.md` currently says per line.
 - **Record keeping:** keep GST records, including tax invoices, for **5 years**. **[Confirmed]** ([ATO GST records](https://www.ato.gov.au/Business/Record-keeping-for-business/Detailed-business-record-keeping-requirements/Running-your-business---records/Business-activity-statement-records/GST-records/), [ATO keeping business records](https://www.ato.gov.au/aboriginal-and-torres-strait-islander-peoples/tax-for-businesses/keeping-business-records)). Issued invoices must therefore be immutable and retained. Changes go through credit or adjustment notes, not edits.
 
-**Where Xero fits.** Most Australian small roasters keep the ledger, bank reconciliation, BAS and often invoicing itself in Xero (or MYOB/QuickBooks). Operations tools push invoices and contacts to Xero, and payments come back from Xero. Roast Console lists a Xero integration. RoasterTools lists Xero as "coming soon". Cropster lists ERP connectors (Dynamics 365, NetSuite) rather than Xero. **[Common practice]** ([RoasterTools pricing](https://roastertools.com/pricing), [Roast Console on Capterra](https://www.capterra.co.uk/software/1222107/Roast-Console), [RoasterTools tech stack](https://roastertools.com/blog/the-must-have-tech-stack-for-coffee-roasters)). Which accounting system this roaster uses, and which system is the source of truth for invoices and payments, is **[Assumption — confirm with roaster]**. This is the single biggest design decision. See the gap analysis.
+**Where Xero fits.** Most Australian small roasters keep the ledger, bank reconciliation, BAS and often invoicing itself in Xero (or MYOB/QuickBooks). Operations tools push invoices and contacts to Xero, and payments come back from Xero. Roast Console lists a Xero integration. RoasterTools lists Xero as "coming soon". Cropster lists ERP connectors (Dynamics 365, NetSuite) rather than Xero. **[Common practice]** ([RoasterTools pricing](https://roastertools.com/pricing), [Roast Console on Capterra](https://www.capterra.co.uk/software/1222107/Roast-Console), [RoasterTools tech stack](https://roastertools.com/blog/the-must-have-tech-stack-for-coffee-roasters)). **This roaster uses MYOB** (answered by the roaster, 2026-11-19). Still **[Assumption — confirm with roaster]**: which MYOB product, and whether MYOB stays the source of truth for invoices and payments (Q1a to Q1c). The recommended split is that our app prepares invoices and creates them in MYOB, while MYOB owns numbering, payments, credits and BAS. See `myob-integration.md` and the gap analysis.
 
 ## 11. Payments, credit notes and overdue follow-up
 
@@ -196,12 +196,12 @@ Further rules:
 | -------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Sales by customer / branch / product / period, in $ and **kg** | owner, sales | Kg per week per account matters for equipment-loan minimums and for pricing tiers. **[Common practice]**                                               |
 | Account health: volume trend, last order date, lapsed accounts | sales        | **[Common practice]**                                                                                                                                  |
-| Aged receivables (current, 30, 60, 90+)                        | bookkeeper   | Often taken from Xero instead. **[Assumption — confirm with roaster]**                                                                                 |
+| Aged receivables (current, 30, 60, 90+)                        | bookkeeper   | Often taken from MYOB instead. **[Assumption — confirm with roaster]**                                                                                 |
 | Green stock on hand (kg per lot, value) and days of cover      | roaster      | **[Common practice]**                                                                                                                                  |
 | Roast loss by lot / profile                                    | roaster      | Quality and cost control. **[Common practice]**                                                                                                        |
 | COGS and margin per kg by product and customer                 | owner        | Needs landed green cost + yield + packaging. The method (weighted average vs FIFO, overhead allocation) is **[Assumption — confirm with accountant]**. |
 | Production plan: kg to roast per coffee per roast day          | production   | Derived from the order book. **[Common practice]**                                                                                                     |
-| GST summary for BAS                                            | bookkeeper   | Normally produced in Xero. The CRM should not duplicate this if Xero is the ledger. **[Assumption — confirm with roaster]**                            |
+| GST summary for BAS                                            | bookkeeper   | Normally produced in the accounting system. MYOB is the ledger here, so the CRM should not duplicate this. **[Assumption — confirm with roaster]**     |
 
 ---
 
@@ -212,7 +212,7 @@ Further rules:
 | Owner / head roaster       | green buying, pricing, roast planning, margin reports                     |
 | Production / packing staff | roast batches, packing, pick lists, dispatch                              |
 | Sales / account manager    | onboarding, price lists, standing orders, account health, overdue chasing |
-| Bookkeeper                 | invoices, credit notes, payments, supplier bills, Xero sync               |
+| Bookkeeper                 | invoices, credit notes, payments, supplier bills, MYOB sync               |
 | Cafe customer (per branch) | places and changes orders, receives invoices and statements               |
 | Driver / courier           | delivery and proof of delivery                                            |
 

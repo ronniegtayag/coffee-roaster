@@ -27,7 +27,7 @@ Run from the repo root:
 
 - `pnpm db:up` / `pnpm db:down` — start/stop Postgres (docker compose, reads `apps/api/.env`)
 - `pnpm dev` — run all apps; `pnpm api <script>` / `pnpm web <script>` — run a script in one app (e.g. `pnpm api prisma:migrate`)
-- `pnpm check` — format, lint, typecheck, test and build for all apps. There is no CI: a git pre-push hook (`.githooks/pre-push`, enabled by `pnpm install`) runs it and blocks the push on failure. Never bypass it with `--no-verify` unless the user asks.
+- `pnpm check` — format, lint, typecheck, test, API e2e (`pnpm api test:e2e`) and build for all apps. **Needs Docker running** (e2e starts a throwaway Postgres via testcontainers, never the dev database). There is no CI: a git pre-push hook (`.githooks/pre-push`, enabled by `pnpm install`) runs it and blocks the push on failure. Never bypass it with `--no-verify` unless the user asks.
 - `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build` — all apps; `pnpm format` / `pnpm format:check` — Prettier at the root
 
 Local gotcha: a Homebrew Postgres on `localhost:5432` will shadow the Docker one. Stop it (`brew services stop postgresql@18`) or set `POSTGRES_PORT` and `DATABASE_URL` in `apps/api/.env` to another port.
@@ -36,8 +36,8 @@ Local gotcha: a Homebrew Postgres on `localhost:5432` will shadow the Docker one
 
 Full reference: `docs/agent-teams.md`.
 
-- Roles live in `.claude/agents/`: `product-owner`, `architect`, `backend-developer`, `qa-engineer`, `code-reviewer`. Always spawn teammates with these exact names and agent types — each role messages the others by name.
-- Flow: `product-owner` (what/why, in `docs/domain/` + brief) → `architect` (how) → `backend-developer` + `qa-engineer` in parallel → `code-reviewer`.
+- Roles live in `.claude/agents/`: `product-owner`, `architect`, `backend-developer`, `frontend-developer`, `qa-engineer`, `code-reviewer`. Always spawn teammates with these exact names and agent types — each role messages the others by name.
+- Flow: `product-owner` (what/why, in `docs/domain/` + brief) → `architect` (how) → `backend-developer` + `frontend-developer` + `qa-engineer` in parallel → `code-reviewer`.
 - Business knowledge lives in `docs/domain/`. Anything marked "Assumption — confirm with roaster" is not settled; ask the user before building on it.
 - Before spawning a team for a feature, the lead writes a brief at `docs/briefs/<feature>.md` (goal, scope, decisions so far, open questions). Spawn prompts only point to the brief; teammates read it first.
 - Teammates update the brief's "Decisions" section when they settle something others depend on, instead of repeating it in messages.

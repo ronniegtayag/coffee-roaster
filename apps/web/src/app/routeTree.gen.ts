@@ -9,68 +9,253 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as SystemStatusRouteImport } from './routes/system/status'
+import { Route as AuthedRouteImport } from './routes/_authed'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
+import { Route as AuthedCustomersIndexRouteImport } from './routes/_authed/customers/index'
+import { Route as AuthedCustomersNewRouteImport } from './routes/_authed/customers/new'
+import { Route as AuthedSystemStatusRouteImport } from './routes/_authed/system/status'
+import { Route as AuthedCustomersCustomerIdIndexRouteImport } from './routes/_authed/customers/$customerId/index'
+import { Route as AuthedCustomersCustomerIdEditRouteImport } from './routes/_authed/customers/$customerId/edit'
+import { Route as AuthedCustomersCustomerIdBranchesNewRouteImport } from './routes/_authed/customers/$customerId/branches/new'
+import { Route as AuthedCustomersCustomerIdBranchesBranchIdEditRouteImport } from './routes/_authed/customers/$customerId/branches/$branchId/edit'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthedRoute = AuthedRouteImport.update({
+  id: '/_authed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthedIndexRoute = AuthedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRoute,
 } as any)
-const SystemStatusRoute = SystemStatusRouteImport.update({
+const AuthedCustomersIndexRoute = AuthedCustomersIndexRouteImport.update({
+  id: '/customers/',
+  path: '/customers/',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedCustomersNewRoute = AuthedCustomersNewRouteImport.update({
+  id: '/customers/new',
+  path: '/customers/new',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedSystemStatusRoute = AuthedSystemStatusRouteImport.update({
   id: '/system/status',
   path: '/system/status',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedCustomersCustomerIdIndexRoute =
+  AuthedCustomersCustomerIdIndexRouteImport.update({
+    id: '/customers/$customerId/',
+    path: '/customers/$customerId/',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedCustomersCustomerIdEditRoute =
+  AuthedCustomersCustomerIdEditRouteImport.update({
+    id: '/customers/$customerId/edit',
+    path: '/customers/$customerId/edit',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedCustomersCustomerIdBranchesNewRoute =
+  AuthedCustomersCustomerIdBranchesNewRouteImport.update({
+    id: '/customers/$customerId/branches/new',
+    path: '/customers/$customerId/branches/new',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedCustomersCustomerIdBranchesBranchIdEditRoute =
+  AuthedCustomersCustomerIdBranchesBranchIdEditRouteImport.update({
+    id: '/customers/$customerId/branches/$branchId/edit',
+    path: '/customers/$customerId/branches/$branchId/edit',
+    getParentRoute: () => AuthedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/system/status': typeof SystemStatusRoute
+  '/': typeof AuthedIndexRoute
+  '/login': typeof LoginRoute
+  '/customers/new': typeof AuthedCustomersNewRoute
+  '/system/status': typeof AuthedSystemStatusRoute
+  '/customers/': typeof AuthedCustomersIndexRoute
+  '/customers/$customerId/edit': typeof AuthedCustomersCustomerIdEditRoute
+  '/customers/$customerId/': typeof AuthedCustomersCustomerIdIndexRoute
+  '/customers/$customerId/branches/new': typeof AuthedCustomersCustomerIdBranchesNewRoute
+  '/customers/$customerId/branches/$branchId/edit': typeof AuthedCustomersCustomerIdBranchesBranchIdEditRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/system/status': typeof SystemStatusRoute
+  '/login': typeof LoginRoute
+  '/': typeof AuthedIndexRoute
+  '/customers/new': typeof AuthedCustomersNewRoute
+  '/system/status': typeof AuthedSystemStatusRoute
+  '/customers': typeof AuthedCustomersIndexRoute
+  '/customers/$customerId/edit': typeof AuthedCustomersCustomerIdEditRoute
+  '/customers/$customerId': typeof AuthedCustomersCustomerIdIndexRoute
+  '/customers/$customerId/branches/new': typeof AuthedCustomersCustomerIdBranchesNewRoute
+  '/customers/$customerId/branches/$branchId/edit': typeof AuthedCustomersCustomerIdBranchesBranchIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/system/status': typeof SystemStatusRoute
+  '/_authed': typeof AuthedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_authed/': typeof AuthedIndexRoute
+  '/_authed/customers/new': typeof AuthedCustomersNewRoute
+  '/_authed/system/status': typeof AuthedSystemStatusRoute
+  '/_authed/customers/': typeof AuthedCustomersIndexRoute
+  '/_authed/customers/$customerId/edit': typeof AuthedCustomersCustomerIdEditRoute
+  '/_authed/customers/$customerId/': typeof AuthedCustomersCustomerIdIndexRoute
+  '/_authed/customers/$customerId/branches/new': typeof AuthedCustomersCustomerIdBranchesNewRoute
+  '/_authed/customers/$customerId/branches/$branchId/edit': typeof AuthedCustomersCustomerIdBranchesBranchIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/system/status'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/customers/new'
+    | '/system/status'
+    | '/customers/'
+    | '/customers/$customerId/edit'
+    | '/customers/$customerId/'
+    | '/customers/$customerId/branches/new'
+    | '/customers/$customerId/branches/$branchId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/system/status'
-  id: '__root__' | '/' | '/system/status'
+  to:
+    | '/login'
+    | '/'
+    | '/customers/new'
+    | '/system/status'
+    | '/customers'
+    | '/customers/$customerId/edit'
+    | '/customers/$customerId'
+    | '/customers/$customerId/branches/new'
+    | '/customers/$customerId/branches/$branchId/edit'
+  id:
+    | '__root__'
+    | '/_authed'
+    | '/login'
+    | '/_authed/'
+    | '/_authed/customers/new'
+    | '/_authed/system/status'
+    | '/_authed/customers/'
+    | '/_authed/customers/$customerId/edit'
+    | '/_authed/customers/$customerId/'
+    | '/_authed/customers/$customerId/branches/new'
+    | '/_authed/customers/$customerId/branches/$branchId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  SystemStatusRoute: typeof SystemStatusRoute
+  AuthedRoute: typeof AuthedRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_authed': {
+      id: '/_authed'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/system/status': {
-      id: '/system/status'
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authed/': {
+      id: '/_authed/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/customers/': {
+      id: '/_authed/customers/'
+      path: '/customers'
+      fullPath: '/customers/'
+      preLoaderRoute: typeof AuthedCustomersIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/customers/new': {
+      id: '/_authed/customers/new'
+      path: '/customers/new'
+      fullPath: '/customers/new'
+      preLoaderRoute: typeof AuthedCustomersNewRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/system/status': {
+      id: '/_authed/system/status'
       path: '/system/status'
       fullPath: '/system/status'
-      preLoaderRoute: typeof SystemStatusRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedSystemStatusRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/customers/$customerId/': {
+      id: '/_authed/customers/$customerId/'
+      path: '/customers/$customerId'
+      fullPath: '/customers/$customerId/'
+      preLoaderRoute: typeof AuthedCustomersCustomerIdIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/customers/$customerId/edit': {
+      id: '/_authed/customers/$customerId/edit'
+      path: '/customers/$customerId/edit'
+      fullPath: '/customers/$customerId/edit'
+      preLoaderRoute: typeof AuthedCustomersCustomerIdEditRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/customers/$customerId/branches/new': {
+      id: '/_authed/customers/$customerId/branches/new'
+      path: '/customers/$customerId/branches/new'
+      fullPath: '/customers/$customerId/branches/new'
+      preLoaderRoute: typeof AuthedCustomersCustomerIdBranchesNewRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/customers/$customerId/branches/$branchId/edit': {
+      id: '/_authed/customers/$customerId/branches/$branchId/edit'
+      path: '/customers/$customerId/branches/$branchId/edit'
+      fullPath: '/customers/$customerId/branches/$branchId/edit'
+      preLoaderRoute: typeof AuthedCustomersCustomerIdBranchesBranchIdEditRouteImport
+      parentRoute: typeof AuthedRoute
     }
   }
 }
 
+interface AuthedRouteChildren {
+  AuthedIndexRoute: typeof AuthedIndexRoute
+  AuthedCustomersNewRoute: typeof AuthedCustomersNewRoute
+  AuthedSystemStatusRoute: typeof AuthedSystemStatusRoute
+  AuthedCustomersIndexRoute: typeof AuthedCustomersIndexRoute
+  AuthedCustomersCustomerIdEditRoute: typeof AuthedCustomersCustomerIdEditRoute
+  AuthedCustomersCustomerIdIndexRoute: typeof AuthedCustomersCustomerIdIndexRoute
+  AuthedCustomersCustomerIdBranchesNewRoute: typeof AuthedCustomersCustomerIdBranchesNewRoute
+  AuthedCustomersCustomerIdBranchesBranchIdEditRoute: typeof AuthedCustomersCustomerIdBranchesBranchIdEditRoute
+}
+
+const AuthedRouteChildren: AuthedRouteChildren = {
+  AuthedIndexRoute: AuthedIndexRoute,
+  AuthedCustomersNewRoute: AuthedCustomersNewRoute,
+  AuthedSystemStatusRoute: AuthedSystemStatusRoute,
+  AuthedCustomersIndexRoute: AuthedCustomersIndexRoute,
+  AuthedCustomersCustomerIdEditRoute: AuthedCustomersCustomerIdEditRoute,
+  AuthedCustomersCustomerIdIndexRoute: AuthedCustomersCustomerIdIndexRoute,
+  AuthedCustomersCustomerIdBranchesNewRoute:
+    AuthedCustomersCustomerIdBranchesNewRoute,
+  AuthedCustomersCustomerIdBranchesBranchIdEditRoute:
+    AuthedCustomersCustomerIdBranchesBranchIdEditRoute,
+}
+
+const AuthedRouteWithChildren =
+  AuthedRoute._addFileChildren(AuthedRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  SystemStatusRoute: SystemStatusRoute,
+  AuthedRoute: AuthedRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
