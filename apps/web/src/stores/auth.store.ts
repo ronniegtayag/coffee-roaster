@@ -1,10 +1,21 @@
 import { create } from 'zustand';
 
+/** Named permissions sent by the API (`UserDto.permissions`). The web never copies the role matrix. */
+export type Permission =
+  | 'customers:read'
+  | 'customers:write'
+  | 'customers:edit-terms'
+  | 'customers:deactivate'
+  | 'branches:write'
+  | 'branches:update-contact'
+  | 'branches:deactivate';
+
 export interface SessionUser {
   id: string;
   email: string;
   name: string;
   role: 'ADMIN' | 'MANAGER' | 'STAFF';
+  permissions: Permission[];
 }
 
 interface AuthState {

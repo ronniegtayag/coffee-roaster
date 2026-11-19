@@ -22,7 +22,7 @@ export interface NavItem {
 /** One entry per backend module, in the order staff use them. */
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Overview', to: '/', icon: LayoutDashboard, ready: true },
-  { label: 'Customers', to: '/customers', icon: Users, ready: false },
+  { label: 'Customers', to: '/customers', icon: Users, ready: true },
   { label: 'Orders', to: '/orders', icon: ShoppingCart, ready: false },
   { label: 'Invoicing', to: '/invoicing', icon: ReceiptText, ready: false },
   { label: 'Inventory', to: '/inventory', icon: Boxes, ready: false },
