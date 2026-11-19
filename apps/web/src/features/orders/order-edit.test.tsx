@@ -60,9 +60,9 @@ describe('edit order', () => {
 
     version = 4;
     notesOnServer = 'Changed by someone else';
-    await act(async () => {
+    act(() => {
       window.dispatchEvent(new Event('focus'));
-      document.dispatchEvent(new Event('visibilitychange'));
+      window.dispatchEvent(new Event('visibilitychange'));
     });
     expect(
       await screen.findByText(/changed by someone else since you opened it/),
@@ -86,7 +86,7 @@ describe('edit order', () => {
     await userEvent.type(await screen.findByLabelText('Order notes'), 'x');
     await act(async () => {
       window.dispatchEvent(new Event('focus'));
-      document.dispatchEvent(new Event('visibilitychange'));
+      window.dispatchEvent(new Event('visibilitychange'));
       await new Promise((r) => setTimeout(r, 150));
     });
     expect(
