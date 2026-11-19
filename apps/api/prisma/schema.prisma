@@ -191,6 +191,7 @@ model Branch {
 /// What gets roasted (G1). Roast demand is summed per coffee across its products.
 model Coffee {
   id            String     @id @default(uuid(7)) @db.Uuid
+  /// Unique case-insensitively, ignoring outer spaces (index coffees_name_lower_key, hand-written).
   name          String
   type          CoffeeType
   origin        String?
@@ -210,6 +211,7 @@ model Coffee {
 /// list can change without a code change (brief P1).
 model Grind {
   id        String   @id @default(uuid(7)) @db.Uuid
+  /// Also unique case-insensitively (index grinds_name_lower_key, hand-written).
   name      String   @unique
   sortOrder Int      @default(0)
   isActive  Boolean  @default(true)
@@ -292,7 +294,8 @@ model Order {
   gstAmount        Decimal     @default(0) @db.Decimal(12, 2)
   totalIncGst      Decimal     @default(0) @db.Decimal(12, 2)
   /// Sum of bag size x quantity over coffee lines (brief O2 Should, roast demand later).
-  totalWeightGrams Int         @default(0)
+  /// BigInt: 200 lines x 999 bags x 100 kg exceeds Int4. DTOs send a JSON number (safe below 2^53).
+  totalWeightGrams BigInt      @default(0)
   /// Optimistic concurrency: every write must send the version it read (brief O4).
   version          Int         @default(1)
   cancelReason     String?
