@@ -262,3 +262,15 @@ Not in scope until `docs/domain/` answers are confirmed: orders, invoicing, inve
 
 1. **Hosting provider and domains:** where will each app be hosted, and will they share a parent domain (`app.` / `api.`)? Needed before the CORS allowlist and the auth design.
 2. **Auth token storage** (needed for the auth design): access token in memory + refresh token in an httpOnly cookie (recommended; the backend needs a refresh endpoint and cookie handling), or a simpler localStorage token?
+
+## Changes made during implementation (2026-11-19)
+
+The code is the source of truth where it differs from the sections above.
+
+- **API URL env var:** `VITE_API_URL` is the API _origin_ (empty in dev, e.g. `https://api.example.com` in production). The `/api/v1` prefix is a constant (`shared/config/env.ts`), and `/health` uses a second Axios instance (`rootHttp`) on the same origin. The dev proxy target is `DEV_API_TARGET` (not `VITE_`-prefixed, so it never reaches the browser).
+- **Folder layout:** routes, router and layout live under `src/app/` (`src/app/routes`, generated `src/app/routeTree.gen.ts`). shadcn/ui components are generated into `src/shared/ui`, and its `cn` helper into `src/shared/lib/utils.ts` (aliases in `components.json`).
+- **TypeScript 5.9** in both apps: the Vite template's TypeScript 7 isn't supported by typescript-eslint yet. Strict mode is on (the template left it off).
+- **ESLint 10** in both apps (the API was upgraded from 9 to match `@eslint/js` 10).
+- **Package age:** pnpm's minimum-release-age policy rejects packages published in the last day. Pick versions at least ~2 weeks old instead of adding exclusions to `pnpm-workspace.yaml` (e.g. Vitest 5.1.0, jest-dom 7.0.1).
+- **Gateway errors:** a 502–504 without a Nest body (API down behind the dev proxy or a load balancer) becomes `ApiError(status, 'Cannot reach the server')`.
+- **Not done yet:** MSW, the OpenAPI types (step 12), the `frontend-developer` role (step 13) and CORS (step 14). Formatter and component tests are for `qa-engineer`.
