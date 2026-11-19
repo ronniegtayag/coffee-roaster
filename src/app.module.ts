@@ -4,6 +4,7 @@ import { validateEnv } from './config/env';
 import { HealthModule } from './health/health.module';
 import { CustomersModule } from './modules/customers';
 import { InventoryModule } from './modules/inventory';
+import { OrdersModule } from './modules/orders';
 import { SupplierInvoicesModule } from './modules/supplier-invoices';
 import { SuppliersModule } from './modules/suppliers';
 import { PrismaModule } from './prisma/prisma.module';
@@ -14,6 +15,7 @@ import { PrismaModule } from './prisma/prisma.module';
     PrismaModule,
     HealthModule,
     CustomersModule,
+    OrdersModule,
     InventoryModule,
     SuppliersModule,
     SupplierInvoicesModule,
