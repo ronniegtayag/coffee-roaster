@@ -274,3 +274,4 @@ The code is the source of truth where it differs from the sections above.
 - **Package age:** pnpm's minimum-release-age policy rejects packages published in the last day. Pick versions at least ~2 weeks old instead of adding exclusions to `pnpm-workspace.yaml` (e.g. Vitest 5.1.0, jest-dom 7.0.1).
 - **Gateway errors:** a 502–504 without a Nest body (API down behind the dev proxy or a load balancer) becomes `ApiError(status, 'Cannot reach the server')`.
 - **Not done yet:** MSW, the OpenAPI types (step 12), the `frontend-developer` role (step 13) and CORS (step 14). Formatter and component tests are for `qa-engineer`.
+- **No CI/CD for now (user decision, 2026-11-19):** the GitHub Actions workflow was removed. Checks run on the developer's machine with `pnpm check` (format, lint, typecheck, test, build) before pushing. Where this note says "CI", read "`pnpm check`"; the OpenAPI drift check (step 12) becomes part of `pnpm check`.
