@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 import { AustralianState } from '../../../generated/prisma/client';
-import { trim, trimOrNull } from './transforms';
+import { trim, trimOrNull } from '../../../common/transforms';
 
 const required = (label: string, max: number) => ({
   string: { message: `${label} is required` },

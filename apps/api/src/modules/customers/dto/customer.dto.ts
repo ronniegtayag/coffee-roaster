@@ -13,7 +13,8 @@ import {
 } from 'class-validator';
 import { AustralianState } from '../../../generated/prisma/client';
 import { BranchDto } from './branch.dto';
-import { abnOrNull, trim, trimOrNull } from './transforms';
+import { trim, trimOrNull } from '../../../common/transforms';
+import { abnOrNull } from './transforms';
 import { IsAbnChecksum, IsAbnFormat } from './validators';
 
 export const PAYMENT_TERMS_DEFAULT_DAYS = 14;

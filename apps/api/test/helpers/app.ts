@@ -13,7 +13,19 @@ export const PASSWORD = 'correct-horse-battery';
 export const JWT_SECRET = 'e2e-secret-e2e-secret-e2e-secret-e2e-secret';
 export const CSRF = { 'X-Requested-With': 'XMLHttpRequest' };
 
+/** A settable clock for the injected `Clock` (cut-offs depend on "now"). */
+export class FakeClock {
+  private instant = new Date();
+  now(): Date {
+    return new Date(this.instant);
+  }
+  set(iso: string): void {
+    this.instant = new Date(iso);
+  }
+}
+
 export interface TestApp {
+  clock: FakeClock;
   app: INestApplication;
   prisma: PrismaServiceType;
   server: ReturnType<INestApplication['getHttpServer']>;
@@ -67,8 +79,13 @@ export async function createTestApp(env: Record<string, string> = {}): Promise<T
   const { configureApp } = require('../../src/app.setup') as typeof import('../../src/app.setup');
   const { PrismaService } =
     require('../../src/prisma/prisma.service') as typeof import('../../src/prisma/prisma.service');
+  const { Clock } = require('../../src/common/clock') as typeof import('../../src/common/clock');
   /* eslint-enable @typescript-eslint/no-require-imports */
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+  const clock = new FakeClock();
+  const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
+    .overrideProvider(Clock)
+    .useValue(clock)
+    .compile();
   const app = moduleRef.createNestApplication();
   configureApp(app);
   await app.init();
@@ -81,6 +98,7 @@ export async function createTestApp(env: Record<string, string> = {}): Promise<T
   }
   return {
     app,
+    clock,
     prisma,
     server: app.getHttpServer(),
     close: () => app.close(),

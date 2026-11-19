@@ -5,7 +5,10 @@ function collect(errors: ValidationError[], prefix: string, out: FieldError[]): 
   for (const error of errors) {
     const field = prefix ? `${prefix}.${error.property}` : error.property;
     if (error.constraints) {
-      const [code, message] = Object.entries(error.constraints)[0];
+      // Decorators apply bottom-up, so the last constraint is the top-most decorator: the one
+      // written first, which is the most basic check (e.g. "is required") and reads best to users.
+      const entries = Object.entries(error.constraints);
+      const [code, message] = entries[entries.length - 1];
       out.push({ field, code, message });
     }
     if (error.children?.length) collect(error.children, field, out);

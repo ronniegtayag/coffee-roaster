@@ -14,6 +14,7 @@ import {
   PAYMENT_TERMS_DEFAULT_DAYS,
   UpdateCustomerDto,
 } from './dto/customer.dto';
+import type { OrderingBranch } from './customers.types';
 import { displayName, toBranchDto, toCustomerDto, toListItemDto } from './customers.mapper';
 
 const DEFAULT_PAGE_SIZE = 25;
@@ -65,6 +66,24 @@ export class CustomersService {
       pageSize,
       totalItems,
       totalPages: Math.ceil(totalItems / pageSize),
+    };
+  }
+
+  /** Branch and customer status for order entry. Null for unknown or malformed ids. */
+  async getBranchForOrdering(branchId: string): Promise<OrderingBranch | null> {
+    if (!isUUID(branchId)) return null;
+    const branch = await this.prisma.branch.findUnique({
+      where: { id: branchId },
+      include: { customer: true },
+    });
+    if (!branch) return null;
+    return {
+      branchId: branch.id,
+      branchName: branch.name,
+      branchIsActive: branch.isActive,
+      customerId: branch.customerId,
+      customerDisplayName: displayName(branch.customer),
+      customerIsActive: branch.customer.isActive,
     };
   }
 

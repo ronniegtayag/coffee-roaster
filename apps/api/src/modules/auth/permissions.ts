@@ -9,15 +9,50 @@ export enum Permission {
   BranchesWrite = 'branches:write',
   BranchesUpdateContact = 'branches:update-contact',
   BranchesDeactivate = 'branches:deactivate',
+  ProductsRead = 'products:read',
+  ProductsWrite = 'products:write',
+  OrdersRead = 'orders:read',
+  OrdersWrite = 'orders:write',
+  OrdersLateChange = 'orders:late-change',
+  OrdersFulfil = 'orders:fulfil',
+  OrdersShortSupply = 'orders:short-supply',
+  SettingsRoastCalendar = 'settings:roast-calendar',
 }
 
-const ALL: Permission[] = Object.values(Permission);
+/** Spelled out per role (not filtered from ALL) so a new ADMIN-only permission is never granted by accident. */
+const ADMIN_PERMISSIONS: readonly Permission[] = Object.values(Permission);
+
+const MANAGER_PERMISSIONS: readonly Permission[] = [
+  Permission.CustomersRead,
+  Permission.CustomersWrite,
+  Permission.CustomersEditTerms,
+  Permission.CustomersDeactivate,
+  Permission.BranchesWrite,
+  Permission.BranchesUpdateContact,
+  Permission.BranchesDeactivate,
+  Permission.ProductsRead,
+  Permission.ProductsWrite,
+  Permission.OrdersRead,
+  Permission.OrdersWrite,
+  Permission.OrdersLateChange,
+  Permission.OrdersFulfil,
+  Permission.OrdersShortSupply,
+];
+
+const STAFF_PERMISSIONS: readonly Permission[] = [
+  Permission.CustomersRead,
+  Permission.BranchesUpdateContact,
+  Permission.ProductsRead,
+  Permission.OrdersRead,
+  Permission.OrdersWrite,
+  Permission.OrdersFulfil,
+];
 
 /** Working default (D-PO-7, OQ-PO-1): change roles here only. */
 const ROLE_PERMISSIONS: Record<UserRole, readonly Permission[]> = {
-  ADMIN: ALL,
-  MANAGER: ALL,
-  STAFF: [Permission.CustomersRead, Permission.BranchesUpdateContact],
+  ADMIN: ADMIN_PERMISSIONS,
+  MANAGER: MANAGER_PERMISSIONS,
+  STAFF: STAFF_PERMISSIONS,
 };
 
 export function permissionsForRole(role: UserRole): Permission[] {

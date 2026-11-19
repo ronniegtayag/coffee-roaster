@@ -7,6 +7,7 @@ import { CustomersModule } from './modules/customers';
 import { InventoryModule } from './modules/inventory';
 import { InvoicingModule } from './modules/invoicing';
 import { OrdersModule } from './modules/orders';
+import { ProductsModule } from './modules/products';
 import { ReportsModule } from './modules/reports';
 import { SupplierInvoicesModule } from './modules/supplier-invoices';
 import { SuppliersModule } from './modules/suppliers';
@@ -19,6 +20,7 @@ import { PrismaModule } from './prisma/prisma.module';
     HealthModule,
     AuthModule,
     CustomersModule,
+    ProductsModule,
     OrdersModule,
     InvoicingModule,
     InventoryModule,
