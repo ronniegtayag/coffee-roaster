@@ -7,7 +7,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'src/routeTree.gen.ts', 'eslint.config.js'] },
+  { ignores: ['dist', 'coverage', 'src/app/routeTree.gen.ts', 'eslint.config.js'] },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   reactHooks.configs.flat['recommended-latest'],
@@ -19,8 +19,9 @@ export default tseslint.config(
     },
   },
   {
-    // shadcn/ui components export variants next to components.
-    files: ['src/shared/ui/**'],
+    // shadcn/ui components export variants next to components, and TanStack Router route
+    // files export `Route` (the router plugin handles their hot reload).
+    files: ['src/shared/ui/**', 'src/app/routes/**'],
     rules: { 'react-refresh/only-export-components': 'off' },
   },
   eslintConfigPrettier,

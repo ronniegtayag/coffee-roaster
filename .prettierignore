@@ -4,3 +4,4 @@ node_modules
 apps/api/src/generated
 pnpm-lock.yaml
 apps/api/prisma/migrations
+apps/web/src/app/routeTree.gen.ts

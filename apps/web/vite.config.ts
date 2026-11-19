@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
 
@@ -10,7 +11,17 @@ export default defineConfig(({ mode }) => {
   const apiTarget = env.DEV_API_TARGET || 'http://localhost:3000';
 
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      // Must run before react(): generates src/app/routeTree.gen.ts from src/app/routes.
+      tanstackRouter({
+        target: 'react',
+        autoCodeSplitting: true,
+        routesDirectory: './src/app/routes',
+        generatedRouteTree: './src/app/routeTree.gen.ts',
+      }),
+      react(),
+      tailwindcss(),
+    ],
     resolve: {
       alias: { '@': path.resolve(import.meta.dirname, './src') },
     },
