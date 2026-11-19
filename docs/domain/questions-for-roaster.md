@@ -13,6 +13,17 @@ The questions are in plain language so the developer can read them out as writte
 **Q1. Which accounting software do you use (Xero, MYOB, QuickBooks)? Who creates the invoices today, and where do you mark them paid?**
 _Why it matters:_ this decides whether our system _issues_ invoices and tracks payments, or just sends orders to Xero and reads back whether they're paid. If Xero is the system of record, a large part of the invoicing, payments and supplier-bill work becomes a sync job, not a feature. (G6, G12, G13, G22)
 
+> **Answered 2026-11-19 (partly): the roaster uses MYOB, not Xero.** Still unknown: which MYOB product, and who creates invoices today. See Q1a to Q1c and `myob-integration.md`.
+
+**Q1a. Which MYOB do you log into: MYOB Business (in the browser, "Lite" or "Pro"), AccountRight on a PC (desktop or with the file "online"), or MYOB Advanced? Is your company file online?**
+_Why it matters:_ the online MYOB Business/AccountRight file has a supported cloud API we can connect to. A desktop-only file or MYOB Advanced (Acumatica) works differently. (G22)
+
+**Q1b. Who types up the invoices today, and where: in MYOB, a spreadsheet or Word template, or another app (Ordermentum, Upstock, Shopify)? Who marks them paid, and do you match bank payments in MYOB?**
+_Why it matters:_ if invoices are made in MYOB and paid there, MYOB stays the source of truth and our app sends it the sales. If they are made outside MYOB, our app could take over making them. (G6, G13)
+
+**Q1c. Would you be happy for our app to create the invoices in MYOB for you (same numbering, same customers), with MYOB still doing payments, bank reconciliation and BAS? Who is the admin on the MYOB file (they need to approve the connection once)?**
+_Why it matters:_ this settles the recommended split (see `myob-integration.md`) and who can authorise the connection.
+
 **Q2. How do cafes order today: phone, text, email, web shop, or the same order every week? Roughly what share of your volume is a fixed weekly order? When a cafe wants to skip a week or change one delivery, how do they tell you?**
 _Why it matters:_ standing orders and the "skip/change one occurrence" rules are the core of order entry. If most volume is standing orders, they come before ad-hoc ordering. (G3)
 
@@ -62,7 +73,7 @@ _Why it matters:_ this sets the order of the reporting work. (G25)
 **Q16. Do you also sell retail or online (Shopify, etc.) or to offices? Should those orders come into this system?**
 _Why it matters:_ scope. Retail brings consumer GST-inclusive pricing, small bags and ground coffee.
 
-**Q17. Where is your customer list and price list today (Xero contacts, spreadsheet, another system)? How many active accounts and venues do you have?**
+**Q17. Where is your customer list and price list today (MYOB cards, spreadsheet, another system)? How many active accounts and venues do you have?**
 _Why it matters:_ data migration and import, and the scale we need to support.
 
 ---
@@ -76,16 +87,16 @@ _Why it matters:_ each product and charge stores a tax code. A wrong code means 
 _Why it matters:_ this decides the invoice template logic.
 
 **A3. Should GST be rounded per line or on the invoice total?**
-_Why it matters:_ the totals calculation. Our current rule rounds per line. Totals must match Xero to the cent.
+_Why it matters:_ the totals calculation. Our current rule rounds per line. Totals must match MYOB to the cent.
 
 **A4. Which system should own invoice and credit note numbering? Do our credit notes need to be formatted as ATO adjustment notes?**
-_Why it matters:_ this avoids numbering clashes with Xero and settles the credit note content. (G12, G22)
+_Why it matters:_ this avoids numbering clashes with MYOB and settles the credit note content. (G12, G22)
 
 **A5. How should stock be valued and cost of goods worked out (weighted average or FIFO for green coffee)? Should freight and import charges be included in green stock cost? Should packaging and labour be included?**
 _Why it matters:_ this decides whether we track landed cost per lot and what the margin reports calculate. (G10, G25)
 
 **A6. Is GST reported on a cash or accrual basis?**
-_Why it matters:_ whether the invoice date or the payment date drives the GST reports we might produce. Likely none, if Xero does BAS.
+_Why it matters:_ whether the invoice date or the payment date drives the GST reports we might produce. Likely none, since MYOB does BAS.
 
 **A7. Are loaned machines recorded as company assets? Does anything about them need to come from our system (serial numbers, location, install date)?**
 _Why it matters:_ the scope of the equipment register, if one exists. (G21)
