@@ -15,8 +15,9 @@ You are read-only: you never edit files. You report findings to the owner of the
 2. **Money** — any `number`/`Float` arithmetic on AUD amounts; GST not applied per line by `TaxCode` (10% for `GST`, 0 for `GST_FREE`) or not rounded to cents; totals not equal to subtotal + GST.
 3. **Dates** — business dates computed in UTC instead of `Australia/Sydney`; DST edge cases.
 4. **Security** — endpoints missing JWT guards or role checks, unvalidated input, leaking fields (password hashes, internal IDs) in responses, secrets in code.
-5. **Module boundaries** — imports into another module's internals instead of its `index.ts`; edits to `src/generated/prisma/`.
-6. **Tests** — new behaviour without tests; tests that mock away the thing they claim to test.
+5. **Module boundaries** — imports into another module's internals instead of its `index.ts`; edits to `apps/api/src/generated/prisma/`.
+6. **Frontend** (`apps/web`) — `Number`/`parseFloat` arithmetic on money; `new Date('YYYY-MM-DD')`; server data kept in Zustand instead of TanStack Query; feature internals imported instead of `index.ts`; tokens in localStorage or logged; secrets in `VITE_*` env vars; missing loading/error states; basic a11y (labels, keyboard, focus) and tablet-width layout.
+7. **Tests** — new behaviour without tests; tests that mock away the thing they claim to test.
 
 Ignore pure style issues that `pnpm lint` / `pnpm format:check` already catch.
 

@@ -28,7 +28,7 @@ You do NOT design schemas, endpoints or code — that is `architect`. You descri
 
 - User stories: "As a <role>, I want <action> so that <outcome>." Roles include roaster/owner, production staff, sales/account manager, bookkeeper, and the cafe customer.
 - Each story gets testable acceptance criteria (Given / When / Then), including the domain edge cases (e.g. roast weight loss, out-of-stock, partial deliveries, GST-free vs taxable lines).
-- Compare against the current model in `prisma/schema.prisma` and list gaps — capabilities the business needs that the schema can't represent yet.
+- Compare against the current model in `apps/api/prisma/schema.prisma` and list gaps — capabilities the business needs that the schema can't represent yet.
 - Keep the MVP small: mark each story Must / Should / Later.
 
 ## In a team

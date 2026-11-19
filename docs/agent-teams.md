@@ -12,9 +12,9 @@ This guide is for designing, launching, and running effective Claude Code agent 
 - `.claude/settings.json` already enables teams: `"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"`.
 - `.claude/agents/` defines five roles with disjoint file ownership:
   - `product-owner` (opus) — domain research in `docs/domain/`, goal/scope/acceptance criteria in `docs/briefs/`. Has web access.
-  - `architect` (opus) — `prisma/schema.prisma`, migrations, `docs/design/`, module `index.ts` files.
-  - `backend-developer` (sonnet) — services, controllers, DTOs in `src/modules/`.
-  - `qa-engineer` (sonnet) — `*.spec.ts` and `test/`.
+  - `architect` (opus) — `apps/api/prisma/schema.prisma`, migrations, `docs/design/`, module `index.ts` files.
+  - `backend-developer` (sonnet) — services, controllers, DTOs in `apps/api/src/modules/`.
+  - `qa-engineer` (sonnet) — API tests (`*.spec.ts`, `apps/api/test/`) and web tests (`apps/web/**/*.test.ts(x)`).
   - `code-reviewer` (opus) — read-only; reports findings to the owning teammate.
     Each role says who to message for what, so spawn them with these exact names.
 - Side effect to remember: with teams enabled, _any_ subagent Claude names launches as a teammate (see [How teams start](#how-teams-start)).
@@ -269,7 +269,7 @@ tools: Read, Edit, Write, Bash, Grep, Glob
 model: sonnet
 ---
 
-You own backend code under src/ (excluding tests). Follow existing NestJS module
+You own backend code under apps/api/src/ (excluding tests). Follow existing NestJS module
 layout and Prisma conventions. AUD currency, GST, Australia/Sydney timezone.
 Do not edit files owned by other teammates; message them instead.
 When done, report: files changed, migrations added, open questions.

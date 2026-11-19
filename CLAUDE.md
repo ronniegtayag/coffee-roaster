@@ -1,6 +1,11 @@
 # Coffee Roasters CRM
 
-Backend CRM for a Sydney coffee roaster. NestJS 11 modular monolith, Prisma 7, PostgreSQL 18, pnpm, Node 22+.
+CRM for a Sydney coffee roaster. pnpm monorepo, Node 22+:
+
+- `apps/api` (`@coffee/api`): NestJS 11 modular monolith, Prisma 7, PostgreSQL 18.
+- `apps/web` (`@coffee/web`): Vite, React, TypeScript, Tailwind + shadcn/ui, Zustand, TanStack Query + Router, Axios. Desktop and tablet.
+
+Web and API are hosted separately (the API needs CORS). Design: `docs/design/frontend-backend-split.md`.
 
 ## Domain rules
 
@@ -11,16 +16,20 @@ Backend CRM for a Sydney coffee roaster. NestJS 11 modular monolith, Prisma 7, P
 
 ## Code layout
 
-- `src/modules/<name>/` — one folder per module (customers, suppliers, supplier-invoices, inventory, orders, invoicing, reports).
+- `apps/api/src/modules/<name>/` — one folder per module (customers, suppliers, supplier-invoices, inventory, orders, invoicing, reports).
 - Each module's `index.ts` is its only public API. Never import another module's internals.
-- `src/generated/prisma/` is generated — never edit; run `pnpm prisma:generate`.
-- API is served under `api/v1` (see `src/app.setup.ts`); global `ValidationPipe` uses `whitelist` + `forbidNonWhitelisted`.
+- `apps/api/src/generated/prisma/` is generated — never edit; run `pnpm api prisma:generate`.
+- API is served under `api/v1` (see `apps/api/src/app.setup.ts`); global `ValidationPipe` uses `whitelist` + `forbidNonWhitelisted`.
 
 ## Commands
 
-- `pnpm db:up` — start Postgres (docker compose)
-- `pnpm prisma:migrate` — create/apply migrations
-- `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:e2e`
+Run from the repo root:
+
+- `pnpm db:up` / `pnpm db:down` — start/stop Postgres (docker compose, reads `apps/api/.env`)
+- `pnpm dev` — run all apps; `pnpm api <script>` / `pnpm web <script>` — run a script in one app (e.g. `pnpm api prisma:migrate`)
+- `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build` — all apps; `pnpm format` / `pnpm format:check` — Prettier at the root
+
+Local gotcha: a Homebrew Postgres on `localhost:5432` will shadow the Docker one. Stop it (`brew services stop postgresql@18`) or set `POSTGRES_PORT` and `DATABASE_URL` in `apps/api/.env` to another port.
 
 ## Agent teams
 
