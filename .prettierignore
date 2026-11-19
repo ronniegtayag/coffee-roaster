@@ -1,6 +1,6 @@
 dist
 coverage
 node_modules
-src/generated
+apps/api/src/generated
 pnpm-lock.yaml
-prisma/migrations
+apps/api/prisma/migrations
