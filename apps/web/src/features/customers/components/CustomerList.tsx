@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect } from 'react';
 import { useCan } from '@/features/auth';
 import { toApiError } from '@/shared/api/errors';
 import { formatAbn } from '@/shared/lib/abn';
@@ -10,8 +10,8 @@ import { Alert, AlertDescription } from '@/shared/ui/alert';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Field } from '@/shared/ui/field';
-import { Input } from '@/shared/ui/input';
 import { NativeSelect } from '@/shared/ui/native-select';
+import { SearchBox } from '@/shared/ui/search-box';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/table';
 import { customerListQuery } from '../queries';
@@ -63,7 +63,13 @@ export function CustomerList({ search: urlSearch }: { search: CustomerListSearch
 
       <div className="flex flex-wrap items-end gap-3">
         {/* Keyed by the URL's search so the box resets on Clear search and Back. */}
-        <SearchBox key={search} initial={search} onSearch={(value) => update({ search: value })} />
+        <SearchBox
+          id="customer-search"
+          placeholder="Name or ABN"
+          key={search}
+          initial={search}
+          onSearch={(value) => update({ search: value })}
+        />
         <Field id="customer-status" label="Status" className="w-40">
           <NativeSelect
             value={status}
@@ -208,40 +214,6 @@ export function CustomerList({ search: urlSearch }: { search: CustomerListSearch
         </div>
       )}
     </div>
-  );
-}
-
-function SearchBox({
-  initial,
-  onSearch,
-}: {
-  initial: string;
-  onSearch: (value: string | undefined) => void;
-}) {
-  const [term, setTerm] = useState(initial);
-  return (
-    <form
-      role="search"
-      onSubmit={(event: FormEvent) => {
-        event.preventDefault();
-        onSearch(term.trim() || undefined);
-      }}
-      className="flex items-end gap-2"
-    >
-      <Field id="customer-search" label="Search" className="w-64 max-w-full">
-        <Input
-          className="h-10"
-          type="search"
-          placeholder="Name or ABN"
-          value={term}
-          onChange={(e) => setTerm(e.target.value)}
-          maxLength={100}
-        />
-      </Field>
-      <Button type="submit" size="lg" variant="secondary" className="h-10">
-        Search
-      </Button>
-    </form>
   );
 }
 

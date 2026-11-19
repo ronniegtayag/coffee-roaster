@@ -8,7 +8,15 @@ export type Permission =
   | 'customers:deactivate'
   | 'branches:write'
   | 'branches:update-contact'
-  | 'branches:deactivate';
+  | 'branches:deactivate'
+  | 'products:read'
+  | 'products:write'
+  | 'orders:read'
+  | 'orders:write'
+  | 'orders:late-change'
+  | 'orders:fulfil'
+  | 'orders:short-supply'
+  | 'settings:roast-calendar';
 
 export interface SessionUser {
   id: string;

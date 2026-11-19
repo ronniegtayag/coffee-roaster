@@ -28,7 +28,9 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <Coffee className="size-5" aria-hidden />
         Coffee Roaster CRM
       </div>
-      {NAV_ITEMS.map(({ label, to, icon: Icon, ready }) =>
+      {NAV_ITEMS.filter(
+        ({ permission }) => !permission || user?.permissions.includes(permission),
+      ).map(({ label, to, icon: Icon, ready }) =>
         ready ? (
           <Link
             key={to}

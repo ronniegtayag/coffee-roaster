@@ -12,11 +12,24 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthedRouteImport } from './routes/_authed'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
+import { Route as AuthedCoffeesIndexRouteImport } from './routes/_authed/coffees/index'
+import { Route as AuthedCoffeesNewRouteImport } from './routes/_authed/coffees/new'
 import { Route as AuthedCustomersIndexRouteImport } from './routes/_authed/customers/index'
 import { Route as AuthedCustomersNewRouteImport } from './routes/_authed/customers/new'
+import { Route as AuthedOrdersIndexRouteImport } from './routes/_authed/orders/index'
+import { Route as AuthedOrdersNewRouteImport } from './routes/_authed/orders/new'
+import { Route as AuthedOrdersRoastSummaryRouteImport } from './routes/_authed/orders/roast-summary'
+import { Route as AuthedProductsIndexRouteImport } from './routes/_authed/products/index'
+import { Route as AuthedProductsNewRouteImport } from './routes/_authed/products/new'
+import { Route as AuthedSettingsRoastCalendarRouteImport } from './routes/_authed/settings/roast-calendar'
 import { Route as AuthedSystemStatusRouteImport } from './routes/_authed/system/status'
+import { Route as AuthedCoffeesCoffeeIdIndexRouteImport } from './routes/_authed/coffees/$coffeeId/index'
+import { Route as AuthedCoffeesCoffeeIdEditRouteImport } from './routes/_authed/coffees/$coffeeId/edit'
 import { Route as AuthedCustomersCustomerIdIndexRouteImport } from './routes/_authed/customers/$customerId/index'
 import { Route as AuthedCustomersCustomerIdEditRouteImport } from './routes/_authed/customers/$customerId/edit'
+import { Route as AuthedOrdersOrderIdIndexRouteImport } from './routes/_authed/orders/$orderId/index'
+import { Route as AuthedOrdersOrderIdEditRouteImport } from './routes/_authed/orders/$orderId/edit'
+import { Route as AuthedProductsProductIdIndexRouteImport } from './routes/_authed/products/$productId/index'
 import { Route as AuthedCustomersCustomerIdBranchesNewRouteImport } from './routes/_authed/customers/$customerId/branches/new'
 import { Route as AuthedCustomersCustomerIdBranchesBranchIdEditRouteImport } from './routes/_authed/customers/$customerId/branches/$branchId/edit'
 
@@ -34,6 +47,16 @@ const AuthedIndexRoute = AuthedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedCoffeesIndexRoute = AuthedCoffeesIndexRouteImport.update({
+  id: '/coffees/',
+  path: '/coffees/',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedCoffeesNewRoute = AuthedCoffeesNewRouteImport.update({
+  id: '/coffees/new',
+  path: '/coffees/new',
+  getParentRoute: () => AuthedRoute,
+} as any)
 const AuthedCustomersIndexRoute = AuthedCustomersIndexRouteImport.update({
   id: '/customers/',
   path: '/customers/',
@@ -44,11 +67,55 @@ const AuthedCustomersNewRoute = AuthedCustomersNewRouteImport.update({
   path: '/customers/new',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedOrdersIndexRoute = AuthedOrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedOrdersNewRoute = AuthedOrdersNewRouteImport.update({
+  id: '/orders/new',
+  path: '/orders/new',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedOrdersRoastSummaryRoute =
+  AuthedOrdersRoastSummaryRouteImport.update({
+    id: '/orders/roast-summary',
+    path: '/orders/roast-summary',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedProductsIndexRoute = AuthedProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedProductsNewRoute = AuthedProductsNewRouteImport.update({
+  id: '/products/new',
+  path: '/products/new',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedSettingsRoastCalendarRoute =
+  AuthedSettingsRoastCalendarRouteImport.update({
+    id: '/settings/roast-calendar',
+    path: '/settings/roast-calendar',
+    getParentRoute: () => AuthedRoute,
+  } as any)
 const AuthedSystemStatusRoute = AuthedSystemStatusRouteImport.update({
   id: '/system/status',
   path: '/system/status',
   getParentRoute: () => AuthedRoute,
 } as any)
+const AuthedCoffeesCoffeeIdIndexRoute =
+  AuthedCoffeesCoffeeIdIndexRouteImport.update({
+    id: '/coffees/$coffeeId/',
+    path: '/coffees/$coffeeId/',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedCoffeesCoffeeIdEditRoute =
+  AuthedCoffeesCoffeeIdEditRouteImport.update({
+    id: '/coffees/$coffeeId/edit',
+    path: '/coffees/$coffeeId/edit',
+    getParentRoute: () => AuthedRoute,
+  } as any)
 const AuthedCustomersCustomerIdIndexRoute =
   AuthedCustomersCustomerIdIndexRouteImport.update({
     id: '/customers/$customerId/',
@@ -59,6 +126,23 @@ const AuthedCustomersCustomerIdEditRoute =
   AuthedCustomersCustomerIdEditRouteImport.update({
     id: '/customers/$customerId/edit',
     path: '/customers/$customerId/edit',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedOrdersOrderIdIndexRoute =
+  AuthedOrdersOrderIdIndexRouteImport.update({
+    id: '/orders/$orderId/',
+    path: '/orders/$orderId/',
+    getParentRoute: () => AuthedRoute,
+  } as any)
+const AuthedOrdersOrderIdEditRoute = AuthedOrdersOrderIdEditRouteImport.update({
+  id: '/orders/$orderId/edit',
+  path: '/orders/$orderId/edit',
+  getParentRoute: () => AuthedRoute,
+} as any)
+const AuthedProductsProductIdIndexRoute =
+  AuthedProductsProductIdIndexRouteImport.update({
+    id: '/products/$productId/',
+    path: '/products/$productId/',
     getParentRoute: () => AuthedRoute,
   } as any)
 const AuthedCustomersCustomerIdBranchesNewRoute =
@@ -77,22 +161,48 @@ const AuthedCustomersCustomerIdBranchesBranchIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthedIndexRoute
   '/login': typeof LoginRoute
+  '/coffees/new': typeof AuthedCoffeesNewRoute
   '/customers/new': typeof AuthedCustomersNewRoute
+  '/orders/new': typeof AuthedOrdersNewRoute
+  '/orders/roast-summary': typeof AuthedOrdersRoastSummaryRoute
+  '/products/new': typeof AuthedProductsNewRoute
+  '/settings/roast-calendar': typeof AuthedSettingsRoastCalendarRoute
   '/system/status': typeof AuthedSystemStatusRoute
+  '/coffees/': typeof AuthedCoffeesIndexRoute
   '/customers/': typeof AuthedCustomersIndexRoute
+  '/orders/': typeof AuthedOrdersIndexRoute
+  '/products/': typeof AuthedProductsIndexRoute
+  '/coffees/$coffeeId/edit': typeof AuthedCoffeesCoffeeIdEditRoute
   '/customers/$customerId/edit': typeof AuthedCustomersCustomerIdEditRoute
+  '/orders/$orderId/edit': typeof AuthedOrdersOrderIdEditRoute
+  '/coffees/$coffeeId/': typeof AuthedCoffeesCoffeeIdIndexRoute
   '/customers/$customerId/': typeof AuthedCustomersCustomerIdIndexRoute
+  '/orders/$orderId/': typeof AuthedOrdersOrderIdIndexRoute
+  '/products/$productId/': typeof AuthedProductsProductIdIndexRoute
   '/customers/$customerId/branches/new': typeof AuthedCustomersCustomerIdBranchesNewRoute
   '/customers/$customerId/branches/$branchId/edit': typeof AuthedCustomersCustomerIdBranchesBranchIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/': typeof AuthedIndexRoute
+  '/coffees/new': typeof AuthedCoffeesNewRoute
   '/customers/new': typeof AuthedCustomersNewRoute
+  '/orders/new': typeof AuthedOrdersNewRoute
+  '/orders/roast-summary': typeof AuthedOrdersRoastSummaryRoute
+  '/products/new': typeof AuthedProductsNewRoute
+  '/settings/roast-calendar': typeof AuthedSettingsRoastCalendarRoute
   '/system/status': typeof AuthedSystemStatusRoute
+  '/coffees': typeof AuthedCoffeesIndexRoute
   '/customers': typeof AuthedCustomersIndexRoute
+  '/orders': typeof AuthedOrdersIndexRoute
+  '/products': typeof AuthedProductsIndexRoute
+  '/coffees/$coffeeId/edit': typeof AuthedCoffeesCoffeeIdEditRoute
   '/customers/$customerId/edit': typeof AuthedCustomersCustomerIdEditRoute
+  '/orders/$orderId/edit': typeof AuthedOrdersOrderIdEditRoute
+  '/coffees/$coffeeId': typeof AuthedCoffeesCoffeeIdIndexRoute
   '/customers/$customerId': typeof AuthedCustomersCustomerIdIndexRoute
+  '/orders/$orderId': typeof AuthedOrdersOrderIdIndexRoute
+  '/products/$productId': typeof AuthedProductsProductIdIndexRoute
   '/customers/$customerId/branches/new': typeof AuthedCustomersCustomerIdBranchesNewRoute
   '/customers/$customerId/branches/$branchId/edit': typeof AuthedCustomersCustomerIdBranchesBranchIdEditRoute
 }
@@ -101,11 +211,24 @@ export interface FileRoutesById {
   '/_authed': typeof AuthedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authed/': typeof AuthedIndexRoute
+  '/_authed/coffees/new': typeof AuthedCoffeesNewRoute
   '/_authed/customers/new': typeof AuthedCustomersNewRoute
+  '/_authed/orders/new': typeof AuthedOrdersNewRoute
+  '/_authed/orders/roast-summary': typeof AuthedOrdersRoastSummaryRoute
+  '/_authed/products/new': typeof AuthedProductsNewRoute
+  '/_authed/settings/roast-calendar': typeof AuthedSettingsRoastCalendarRoute
   '/_authed/system/status': typeof AuthedSystemStatusRoute
+  '/_authed/coffees/': typeof AuthedCoffeesIndexRoute
   '/_authed/customers/': typeof AuthedCustomersIndexRoute
+  '/_authed/orders/': typeof AuthedOrdersIndexRoute
+  '/_authed/products/': typeof AuthedProductsIndexRoute
+  '/_authed/coffees/$coffeeId/edit': typeof AuthedCoffeesCoffeeIdEditRoute
   '/_authed/customers/$customerId/edit': typeof AuthedCustomersCustomerIdEditRoute
+  '/_authed/orders/$orderId/edit': typeof AuthedOrdersOrderIdEditRoute
+  '/_authed/coffees/$coffeeId/': typeof AuthedCoffeesCoffeeIdIndexRoute
   '/_authed/customers/$customerId/': typeof AuthedCustomersCustomerIdIndexRoute
+  '/_authed/orders/$orderId/': typeof AuthedOrdersOrderIdIndexRoute
+  '/_authed/products/$productId/': typeof AuthedProductsProductIdIndexRoute
   '/_authed/customers/$customerId/branches/new': typeof AuthedCustomersCustomerIdBranchesNewRoute
   '/_authed/customers/$customerId/branches/$branchId/edit': typeof AuthedCustomersCustomerIdBranchesBranchIdEditRoute
 }
@@ -114,22 +237,48 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/coffees/new'
     | '/customers/new'
+    | '/orders/new'
+    | '/orders/roast-summary'
+    | '/products/new'
+    | '/settings/roast-calendar'
     | '/system/status'
+    | '/coffees/'
     | '/customers/'
+    | '/orders/'
+    | '/products/'
+    | '/coffees/$coffeeId/edit'
     | '/customers/$customerId/edit'
+    | '/orders/$orderId/edit'
+    | '/coffees/$coffeeId/'
     | '/customers/$customerId/'
+    | '/orders/$orderId/'
+    | '/products/$productId/'
     | '/customers/$customerId/branches/new'
     | '/customers/$customerId/branches/$branchId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/'
+    | '/coffees/new'
     | '/customers/new'
+    | '/orders/new'
+    | '/orders/roast-summary'
+    | '/products/new'
+    | '/settings/roast-calendar'
     | '/system/status'
+    | '/coffees'
     | '/customers'
+    | '/orders'
+    | '/products'
+    | '/coffees/$coffeeId/edit'
     | '/customers/$customerId/edit'
+    | '/orders/$orderId/edit'
+    | '/coffees/$coffeeId'
     | '/customers/$customerId'
+    | '/orders/$orderId'
+    | '/products/$productId'
     | '/customers/$customerId/branches/new'
     | '/customers/$customerId/branches/$branchId/edit'
   id:
@@ -137,11 +286,24 @@ export interface FileRouteTypes {
     | '/_authed'
     | '/login'
     | '/_authed/'
+    | '/_authed/coffees/new'
     | '/_authed/customers/new'
+    | '/_authed/orders/new'
+    | '/_authed/orders/roast-summary'
+    | '/_authed/products/new'
+    | '/_authed/settings/roast-calendar'
     | '/_authed/system/status'
+    | '/_authed/coffees/'
     | '/_authed/customers/'
+    | '/_authed/orders/'
+    | '/_authed/products/'
+    | '/_authed/coffees/$coffeeId/edit'
     | '/_authed/customers/$customerId/edit'
+    | '/_authed/orders/$orderId/edit'
+    | '/_authed/coffees/$coffeeId/'
     | '/_authed/customers/$customerId/'
+    | '/_authed/orders/$orderId/'
+    | '/_authed/products/$productId/'
     | '/_authed/customers/$customerId/branches/new'
     | '/_authed/customers/$customerId/branches/$branchId/edit'
   fileRoutesById: FileRoutesById
@@ -174,6 +336,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedIndexRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/coffees/': {
+      id: '/_authed/coffees/'
+      path: '/coffees'
+      fullPath: '/coffees/'
+      preLoaderRoute: typeof AuthedCoffeesIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/coffees/new': {
+      id: '/_authed/coffees/new'
+      path: '/coffees/new'
+      fullPath: '/coffees/new'
+      preLoaderRoute: typeof AuthedCoffeesNewRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/customers/': {
       id: '/_authed/customers/'
       path: '/customers'
@@ -188,11 +364,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedCustomersNewRouteImport
       parentRoute: typeof AuthedRoute
     }
+    '/_authed/orders/': {
+      id: '/_authed/orders/'
+      path: '/orders'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof AuthedOrdersIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/orders/new': {
+      id: '/_authed/orders/new'
+      path: '/orders/new'
+      fullPath: '/orders/new'
+      preLoaderRoute: typeof AuthedOrdersNewRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/orders/roast-summary': {
+      id: '/_authed/orders/roast-summary'
+      path: '/orders/roast-summary'
+      fullPath: '/orders/roast-summary'
+      preLoaderRoute: typeof AuthedOrdersRoastSummaryRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/products/': {
+      id: '/_authed/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof AuthedProductsIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/products/new': {
+      id: '/_authed/products/new'
+      path: '/products/new'
+      fullPath: '/products/new'
+      preLoaderRoute: typeof AuthedProductsNewRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/settings/roast-calendar': {
+      id: '/_authed/settings/roast-calendar'
+      path: '/settings/roast-calendar'
+      fullPath: '/settings/roast-calendar'
+      preLoaderRoute: typeof AuthedSettingsRoastCalendarRouteImport
+      parentRoute: typeof AuthedRoute
+    }
     '/_authed/system/status': {
       id: '/_authed/system/status'
       path: '/system/status'
       fullPath: '/system/status'
       preLoaderRoute: typeof AuthedSystemStatusRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/coffees/$coffeeId/': {
+      id: '/_authed/coffees/$coffeeId/'
+      path: '/coffees/$coffeeId'
+      fullPath: '/coffees/$coffeeId/'
+      preLoaderRoute: typeof AuthedCoffeesCoffeeIdIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/coffees/$coffeeId/edit': {
+      id: '/_authed/coffees/$coffeeId/edit'
+      path: '/coffees/$coffeeId/edit'
+      fullPath: '/coffees/$coffeeId/edit'
+      preLoaderRoute: typeof AuthedCoffeesCoffeeIdEditRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/customers/$customerId/': {
@@ -207,6 +439,27 @@ declare module '@tanstack/react-router' {
       path: '/customers/$customerId/edit'
       fullPath: '/customers/$customerId/edit'
       preLoaderRoute: typeof AuthedCustomersCustomerIdEditRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/orders/$orderId/': {
+      id: '/_authed/orders/$orderId/'
+      path: '/orders/$orderId'
+      fullPath: '/orders/$orderId/'
+      preLoaderRoute: typeof AuthedOrdersOrderIdIndexRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/orders/$orderId/edit': {
+      id: '/_authed/orders/$orderId/edit'
+      path: '/orders/$orderId/edit'
+      fullPath: '/orders/$orderId/edit'
+      preLoaderRoute: typeof AuthedOrdersOrderIdEditRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    '/_authed/products/$productId/': {
+      id: '/_authed/products/$productId/'
+      path: '/products/$productId'
+      fullPath: '/products/$productId/'
+      preLoaderRoute: typeof AuthedProductsProductIdIndexRouteImport
       parentRoute: typeof AuthedRoute
     }
     '/_authed/customers/$customerId/branches/new': {
@@ -228,22 +481,48 @@ declare module '@tanstack/react-router' {
 
 interface AuthedRouteChildren {
   AuthedIndexRoute: typeof AuthedIndexRoute
+  AuthedCoffeesNewRoute: typeof AuthedCoffeesNewRoute
   AuthedCustomersNewRoute: typeof AuthedCustomersNewRoute
+  AuthedOrdersNewRoute: typeof AuthedOrdersNewRoute
+  AuthedOrdersRoastSummaryRoute: typeof AuthedOrdersRoastSummaryRoute
+  AuthedProductsNewRoute: typeof AuthedProductsNewRoute
+  AuthedSettingsRoastCalendarRoute: typeof AuthedSettingsRoastCalendarRoute
   AuthedSystemStatusRoute: typeof AuthedSystemStatusRoute
+  AuthedCoffeesIndexRoute: typeof AuthedCoffeesIndexRoute
   AuthedCustomersIndexRoute: typeof AuthedCustomersIndexRoute
+  AuthedOrdersIndexRoute: typeof AuthedOrdersIndexRoute
+  AuthedProductsIndexRoute: typeof AuthedProductsIndexRoute
+  AuthedCoffeesCoffeeIdEditRoute: typeof AuthedCoffeesCoffeeIdEditRoute
   AuthedCustomersCustomerIdEditRoute: typeof AuthedCustomersCustomerIdEditRoute
+  AuthedOrdersOrderIdEditRoute: typeof AuthedOrdersOrderIdEditRoute
+  AuthedCoffeesCoffeeIdIndexRoute: typeof AuthedCoffeesCoffeeIdIndexRoute
   AuthedCustomersCustomerIdIndexRoute: typeof AuthedCustomersCustomerIdIndexRoute
+  AuthedOrdersOrderIdIndexRoute: typeof AuthedOrdersOrderIdIndexRoute
+  AuthedProductsProductIdIndexRoute: typeof AuthedProductsProductIdIndexRoute
   AuthedCustomersCustomerIdBranchesNewRoute: typeof AuthedCustomersCustomerIdBranchesNewRoute
   AuthedCustomersCustomerIdBranchesBranchIdEditRoute: typeof AuthedCustomersCustomerIdBranchesBranchIdEditRoute
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
   AuthedIndexRoute: AuthedIndexRoute,
+  AuthedCoffeesNewRoute: AuthedCoffeesNewRoute,
   AuthedCustomersNewRoute: AuthedCustomersNewRoute,
+  AuthedOrdersNewRoute: AuthedOrdersNewRoute,
+  AuthedOrdersRoastSummaryRoute: AuthedOrdersRoastSummaryRoute,
+  AuthedProductsNewRoute: AuthedProductsNewRoute,
+  AuthedSettingsRoastCalendarRoute: AuthedSettingsRoastCalendarRoute,
   AuthedSystemStatusRoute: AuthedSystemStatusRoute,
+  AuthedCoffeesIndexRoute: AuthedCoffeesIndexRoute,
   AuthedCustomersIndexRoute: AuthedCustomersIndexRoute,
+  AuthedOrdersIndexRoute: AuthedOrdersIndexRoute,
+  AuthedProductsIndexRoute: AuthedProductsIndexRoute,
+  AuthedCoffeesCoffeeIdEditRoute: AuthedCoffeesCoffeeIdEditRoute,
   AuthedCustomersCustomerIdEditRoute: AuthedCustomersCustomerIdEditRoute,
+  AuthedOrdersOrderIdEditRoute: AuthedOrdersOrderIdEditRoute,
+  AuthedCoffeesCoffeeIdIndexRoute: AuthedCoffeesCoffeeIdIndexRoute,
   AuthedCustomersCustomerIdIndexRoute: AuthedCustomersCustomerIdIndexRoute,
+  AuthedOrdersOrderIdIndexRoute: AuthedOrdersOrderIdIndexRoute,
+  AuthedProductsProductIdIndexRoute: AuthedProductsProductIdIndexRoute,
   AuthedCustomersCustomerIdBranchesNewRoute:
     AuthedCustomersCustomerIdBranchesNewRoute,
   AuthedCustomersCustomerIdBranchesBranchIdEditRoute:

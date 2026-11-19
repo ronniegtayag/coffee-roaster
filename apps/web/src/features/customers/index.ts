@@ -1,4 +1,5 @@
 // Public API of the customers feature. Other code imports from here, not from internals.
+export { BranchPicker, type BranchSelection } from './components/BranchPicker';
 export { CustomerList } from './components/CustomerList';
 export {
   CustomerDetailPage,

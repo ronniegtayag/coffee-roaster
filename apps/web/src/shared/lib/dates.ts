@@ -47,3 +47,44 @@ export function formatTimestamp(iso: string | null | undefined): string {
 export function todayInSydney(now: Date = new Date()): string {
   return isoDayFormatter.format(now);
 }
+
+const longBusinessDateFormatter = new Intl.DateTimeFormat('en-AU', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+});
+
+function parseBusinessDate(date: string): [number, number, number] {
+  const match = BUSINESS_DATE.exec(date);
+  if (!match) throw new Error(`Not a YYYY-MM-DD business date: "${date}"`);
+  return [Number(match[1]), Number(match[2]), Number(match[3])];
+}
+
+/** "2026-11-24" → "Tue 24 Nov". */
+export function formatBusinessDateLong(date: string | null | undefined): string {
+  if (!date) return '—';
+  const [y, m, d] = parseBusinessDate(date);
+  return longBusinessDateFormatter.format(new Date(Date.UTC(y, m - 1, d)));
+}
+
+/** "12:00" → "12:00 pm", "09:30" → "9:30 am". */
+export function formatClockTime(time: string): string {
+  const match = /^(\d{1,2}):(\d{2})$/.exec(time);
+  if (!match) return time;
+  const hour = Number(match[1]);
+  const suffix = hour >= 12 ? 'pm' : 'am';
+  return `${hour % 12 === 0 ? 12 : hour % 12}:${match[2]} ${suffix}`;
+}
+
+/** Whole days from `from` to `to` (both "YYYY-MM-DD"); negative if `to` is earlier. */
+export function daysBetweenBusinessDates(from: string, to: string): number {
+  const [fy, fm, fd] = parseBusinessDate(from);
+  const [ty, tm, td] = parseBusinessDate(to);
+  return Math.round((Date.UTC(ty, tm - 1, td) - Date.UTC(fy, fm - 1, fd)) / 86_400_000);
+}
+
+/** True for a well-formed "YYYY-MM-DD" (not checked against the calendar). */
+export function isBusinessDateString(value: unknown): value is string {
+  return typeof value === 'string' && BUSINESS_DATE.test(value);
+}

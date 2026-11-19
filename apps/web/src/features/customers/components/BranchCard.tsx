@@ -12,6 +12,7 @@ export function BranchCard({ customer, branch }: { customer: Customer; branch: B
   const canWriteBranch = useCan('branches:write');
   const canEditContact = useCan('branches:update-contact');
   const canEdit = canWriteBranch || canEditContact;
+  const canOrder = useCan('orders:write');
   const canToggle = useCan('branches:deactivate');
   const setActive = useSetBranchActive(customer.id, branch.id);
 
@@ -22,7 +23,14 @@ export function BranchCard({ customer, branch }: { customer: Customer; branch: B
           <h3 className="font-medium">{branch.name}</h3>
           {!branch.isActive && <Badge variant="outline">Inactive</Badge>}
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          {canOrder && branch.isActive && customer.isActive && (
+            <Button asChild variant="outline" size="lg">
+              <Link to="/orders/new" search={{ customerId: customer.id, branchId: branch.id }}>
+                New order<span className="sr-only"> for {branch.name}</span>
+              </Link>
+            </Button>
+          )}
           {canEdit && (
             <Button asChild variant="outline" size="lg">
               <Link
